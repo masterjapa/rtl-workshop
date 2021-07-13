@@ -2,9 +2,16 @@ import axios from 'axios';
 
 const POKEDEX_URL = 'https://pokeapi.co/api/v2/pokemon'
 
-const searchPokemon = async (search, config) => {
+export const searchPokemon = async (search, config) => {
+
+    if(!search){
+        return null;
+    }
+
     try {
-        const { data } = await axios.get(`${POKEDEX_URL}/${search}`, config);
+        const query = search.toLowerCase();
+
+        const { data } = await axios.get(`${POKEDEX_URL}/${query}`, config);
 
         const { name, sprites, types, height, weight } = data;
 
@@ -17,5 +24,3 @@ const searchPokemon = async (search, config) => {
         return null;
     }
 }
-
-export default searchPokemon;

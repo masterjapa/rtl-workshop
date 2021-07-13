@@ -1,42 +1,37 @@
-import React, { useState, useRef } from 'react';
-import searchPokemon from '../../helpers/searchPokemon';
+import React, { useState, useRef, useEffect } from 'react';
+import { searchPokemon } from '../../helpers/searchPokemon';
 import './index.css'
 
-const SearchInput = ({ onSearch, isFetchingPokemon }) => {
+const SearchInput = ({ onAfterSearch, isFetchingPokemon }) => {
     const [value, setValue] = useState('');
     const debounce = useRef(null);
     const defaultTimeout = 800;
 
     const placeholder = "Digite um pokemon..."
 
-    
-    const onSearchPokemon = async (name) => {
-        if(!name){
-            isFetchingPokemon(false);
-            onSearch(null);
-            return;
-        }
-
-        const pokemon = await searchPokemon(name.toLowerCase());
-
-        isFetchingPokemon(false);
-        onSearch(pokemon);
-    }
-
 
     const onChangeValue = (e) => {
+        setValue(e.target.value);
+    }
+
+    useEffect(() => {
+
+        async function onSearchPokemon() {
+            isFetchingPokemon(true);
+
+            const pokemon = await searchPokemon(value);
+    
+            onAfterSearch(pokemon);
+
+            isFetchingPokemon(false);
+        }
 
         if(debounce.current) {
             clearTimeout(debounce.current);
         }
 
-        setValue(e.target.value);
-
-        debounce.current = setTimeout(() => {
-            isFetchingPokemon(true)
-            onSearchPokemon(e.target.value);
-        }, defaultTimeout);
-    }
+        debounce.current = setTimeout(onSearchPokemon, defaultTimeout);
+    }, [value, isFetchingPokemon, onAfterSearch])
 
     return(
         <input type="text" value={value} placeholder={placeholder} onChange={onChangeValue} />

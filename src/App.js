@@ -10,7 +10,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <SearchInput onSearch={setPokemon} isFetchingPokemon={setIsSearching} />
+      <SearchInput onAfterSearch={setPokemon} isFetchingPokemon={setIsSearching} />
       <Results pokemon={pokemon} isSearching={isSearching}>
         {isSearching && <Loader />}
       </Results>
